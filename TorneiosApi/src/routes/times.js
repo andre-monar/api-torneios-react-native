@@ -30,6 +30,22 @@ router.post('/', upload.single('imagem'), async (req, res) => {
   }
 });
 
+router.put('/:id', upload.single('imagem'), async (req, res) => {
+  try {
+    const { sigla, nome } = req.body;
+    const updates = { sigla, nome };
+    if (req.file) updates.imagem = req.file.filename;
+    const [updated] = await Time.update(updates, {
+      where: { id: req.params.id, fk_id_usuario: req.userId },
+    });
+    if (!updated) return res.status(404).json({ error: 'Time não encontrado' });
+    const time = await Time.findByPk(req.params.id);
+    res.json(time);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
 router.delete('/:id', async (req, res) => {
   const deleted = await Time.destroy({ where: { id: req.params.id, fk_id_usuario: req.userId } });
   if (!deleted) return res.status(404).json({ error: 'Time não encontrado' });

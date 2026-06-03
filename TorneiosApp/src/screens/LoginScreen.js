@@ -28,7 +28,7 @@ export default function LoginScreen({ navigation }) {
         setError(data.error ?? 'Credenciais inválidas!');
         return;
       }
-      navigation.navigate('Home');
+      navigation.navigate('Times', { token: data.token });
     } catch (err) {
       if (err.name === 'AbortError') {
         setError('Servidor indisponível. Tente novamente.');
