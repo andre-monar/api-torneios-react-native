@@ -1,20 +1,24 @@
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+require('dotenv').config();
+const express = require('express');
+const path    = require('path');
+const { sequelize } = require('./src/models');
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+const authRoutes  = require('./src/routes/auth');
+const timesRoutes = require('./src/routes/times');
+const jogosRoutes = require('./src/routes/jogos');
 
-var app = express();
+const app = express();
 
-app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
+app.use('/auth',   authRoutes);
+app.use('/times',  timesRoutes);
+app.use('/jogos',  jogosRoutes);
 
-module.exports = app;
+const PORT = process.env.PORT || 3000;
+
+sequelize.sync().then(() => {
+  app.listen(PORT, () => console.log(`API rodando na porta ${PORT}`));
+});
