@@ -4,19 +4,24 @@ import AppTextInput from '../components/AppTextInput';
 import AppButton from '../components/AppButton';
 import { API_URL } from '../config/api';
 
-export default function LoginScreen({ navigation }) {
-  const [email, setEmail]     = useState('');
-  const [senha, setSenha]     = useState('');
-  const [error, setError]     = useState('');
-  const [loading, setLoading] = useState(false);
+export default function RegisterScreen({ navigation }) {
+  const [email, setEmail]               = useState('');
+  const [senha, setSenha]               = useState('');
+  const [confirmarSenha, setConfirmar]  = useState('');
+  const [error, setError]               = useState('');
+  const [loading, setLoading]           = useState(false);
 
-  async function handleLogin() {
+  async function handleRegister() {
     setError('');
+    if (senha !== confirmarSenha) {
+      setError('As senhas não conferem.');
+      return;
+    }
     setLoading(true);
     try {
       const controller = new AbortController();
       const timeout = setTimeout(() => controller.abort(), 5000);
-      const res = await fetch(`${API_URL}/auth/login`, {
+      const res = await fetch(`${API_URL}/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, senha }),
@@ -25,10 +30,10 @@ export default function LoginScreen({ navigation }) {
       clearTimeout(timeout);
       const data = await res.json();
       if (!res.ok) {
-        setError(data.error ?? 'Credenciais inválidas!');
+        setError(data.error ?? 'Erro ao registrar.');
         return;
       }
-      navigation.navigate('Home');
+      navigation.navigate('Login');
     } catch (err) {
       if (err.name === 'AbortError') {
         setError('Servidor indisponível. Tente novamente.');
@@ -58,11 +63,17 @@ export default function LoginScreen({ navigation }) {
           value={senha}
           onChangeText={setSenha}
           secureTextEntry
+        />
+        <AppTextInput
+          label="Confirmar senha"
+          value={confirmarSenha}
+          onChangeText={setConfirmar}
+          secureTextEntry
           error={error}
         />
-        <AppButton title={loading ? 'Entrando...' : 'Login'} onPress={handleLogin} />
+        <AppButton title={loading ? 'Registrando...' : 'Registrar'} onPress={handleRegister} />
         <View style={styles.gap} />
-        <AppButton title="Registrar" variant="secondary" onPress={() => navigation.navigate('Register')} />
+        <AppButton title="Já tenho conta" variant="secondary" onPress={() => navigation.navigate('Login')} />
       </View>
     </KeyboardAvoidingView>
   );
