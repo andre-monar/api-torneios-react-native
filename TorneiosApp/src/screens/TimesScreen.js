@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useLayoutEffect } from 'react';
 import {
-  View, Text, FlatList, Image, StyleSheet,
-  TouchableOpacity, Alert,
+  View, Text, FlatList, Image, StyleSheet, Alert, TouchableOpacity,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import AppButton from '../components/AppButton';
+import CardActions from '../components/CardActions';
+import { shared } from '../styles/shared';
 import { API_URL } from '../config/api';
 
 export default function TimesScreen({ navigation, route }) {
@@ -68,7 +69,7 @@ export default function TimesScreen({ navigation, route }) {
 
   function renderTime({ item }) {
     return (
-      <View style={styles.card}>
+      <View style={shared.card}>
         <View style={styles.colImage}>
           {item.imagem ? (
             <Image
@@ -87,27 +88,17 @@ export default function TimesScreen({ navigation, route }) {
           <Text style={styles.cardLabel}>Nome</Text>
           <Text style={styles.cardValue}>{item.nome}</Text>
         </View>
-        <View style={styles.colActions}>
-          <TouchableOpacity
-            style={styles.actionTop}
-            onPress={() => navigation.navigate('RegisterTime', { token, time: item })}
-          >
-            <Text style={styles.actionEdit}>Editar</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.actionBottom}
-            onPress={() => handleDelete(item.id)}
-          >
-            <Text style={styles.actionDelete}>Excluir</Text>
-          </TouchableOpacity>
-        </View>
+        <CardActions
+          onEdit={() => navigation.navigate('RegisterTime', { token, time: item })}
+          onDelete={() => handleDelete(item.id)}
+        />
       </View>
     );
   }
 
   return (
-    <View style={styles.container}>
-      <View style={styles.topButton}>
+    <View style={shared.container}>
+      <View style={shared.topButton}>
         <AppButton
           title="Registrar Time"
           onPress={() => navigation.navigate('RegisterTime', { token })}
@@ -117,17 +108,17 @@ export default function TimesScreen({ navigation, route }) {
         data={times}
         keyExtractor={(item) => String(item.id)}
         renderItem={renderTime}
-        contentContainerStyle={styles.list}
+        contentContainerStyle={shared.list}
         ListEmptyComponent={
-          <Text style={styles.empty}>Nenhum time cadastrado.</Text>
+          <Text style={shared.empty}>Nenhum time cadastrado.</Text>
         }
       />
-      <View style={styles.bottomButtons}>
+      <View style={shared.bottomButtons}>
         <AppButton
           title="Jogos"
           onPress={() => navigation.navigate('Jogos', { token })}
         />
-        <View style={styles.gap} />
+        <View style={shared.gap} />
         <AppButton
           title="Tabela"
           onPress={() => navigation.navigate('Tabela', { token })}
@@ -138,42 +129,11 @@ export default function TimesScreen({ navigation, route }) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#fff' },
-  topButton: { paddingHorizontal: 24, paddingTop: 16, paddingBottom: 8 },
-  list: { padding: 24, gap: 12 },
-  card: {
-    backgroundColor: '#F0F0F0',
-    borderRadius: 6,
-    padding: 12,
-    flexDirection: 'row',
-    alignItems: 'stretch',
-  },
-  colImage: { width: 56, marginRight: 12, justifyContent: 'center' },
-  image: { width: 56, height: 56, borderRadius: 4 },
+  colImage:         { width: 56, marginRight: 12, justifyContent: 'center' },
+  image:            { width: 56, height: 56, borderRadius: 4 },
   imagePlaceholder: { width: 56, height: 56, borderRadius: 4, backgroundColor: '#D0D0D0' },
-  colSigla: { width: 52, marginRight: 12, justifyContent: 'center' },
-  colNome: { flex: 1, justifyContent: 'center' },
-  cardLabel: { fontSize: 11, color: '#777', marginBottom: 2 },
-  cardValue: { fontSize: 15, fontWeight: '600', color: '#000' },
-  colActions: { width: 64, marginLeft: 12 },
-  actionTop: {
-    flex: 1,
-    backgroundColor: '#4CAF50',
-    borderRadius: 4,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 4,
-  },
-  actionBottom: {
-    flex: 1,
-    backgroundColor: '#e53935',
-    borderRadius: 4,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  actionEdit: { color: '#fff', fontWeight: '600', fontSize: 12 },
-  actionDelete: { color: '#fff', fontWeight: '600', fontSize: 12 },
-  empty: { textAlign: 'center', color: '#999', marginTop: 40 },
-  bottomButtons: { flexDirection: 'row', paddingHorizontal: 24, paddingTop: 8, paddingBottom: 16 },
-  gap: { width: 12 },
+  colSigla:         { width: 52, marginRight: 12, justifyContent: 'center' },
+  colNome:          { flex: 1, justifyContent: 'center' },
+  cardLabel:        { fontSize: 11, color: '#777', marginBottom: 2 },
+  cardValue:        { fontSize: 15, fontWeight: '600', color: '#000' },
 });

@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useLayoutEffect } from 'react';
 import {
-  View, Text, FlatList, StyleSheet,
-  TouchableOpacity, Alert,
+  View, Text, FlatList, StyleSheet, Alert, TouchableOpacity,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import AppButton from '../components/AppButton';
+import CardActions from '../components/CardActions';
 import TeamBadge from '../components/TeamBadge';
+import { shared } from '../styles/shared';
 import { API_URL } from '../config/api';
 
 export default function JogosScreen({ navigation, route }) {
@@ -69,7 +70,7 @@ export default function JogosScreen({ navigation, route }) {
 
   function renderJogo({ item }) {
     return (
-      <View style={styles.card}>
+      <View style={shared.card}>
         <View style={styles.colTeam}>
           <TeamBadge time={item.Time1} size={44} />
         </View>
@@ -85,27 +86,17 @@ export default function JogosScreen({ navigation, route }) {
         <View style={styles.colTeam}>
           <TeamBadge time={item.Time2} size={44} />
         </View>
-        <View style={styles.colActions}>
-          <TouchableOpacity
-            style={styles.actionTop}
-            onPress={() => navigation.navigate('RegisterJogo', { token, jogo: item })}
-          >
-            <Text style={styles.actionEdit}>Editar</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.actionBottom}
-            onPress={() => handleDelete(item.id)}
-          >
-            <Text style={styles.actionDelete}>Excluir</Text>
-          </TouchableOpacity>
-        </View>
+        <CardActions
+          onEdit={() => navigation.navigate('RegisterJogo', { token, jogo: item })}
+          onDelete={() => handleDelete(item.id)}
+        />
       </View>
     );
   }
 
   return (
-    <View style={styles.container}>
-      <View style={styles.topButton}>
+    <View style={shared.container}>
+      <View style={shared.topButton}>
         <AppButton
           title="Registrar Jogo"
           onPress={() => navigation.navigate('RegisterJogo', { token })}
@@ -115,18 +106,18 @@ export default function JogosScreen({ navigation, route }) {
         data={jogos}
         keyExtractor={(item) => String(item.id)}
         renderItem={renderJogo}
-        contentContainerStyle={styles.list}
+        contentContainerStyle={shared.list}
         ListEmptyComponent={
-          <Text style={styles.empty}>Nenhum jogo cadastrado.</Text>
+          <Text style={shared.empty}>Nenhum jogo cadastrado.</Text>
         }
       />
-      <View style={styles.bottomButtons}>
+      <View style={shared.bottomButtons}>
         <AppButton
           title="Times"
           variant="secondary"
           onPress={() => navigation.goBack()}
         />
-        <View style={styles.gap} />
+        <View style={shared.gap} />
         <AppButton
           title="Tabela"
           onPress={() => navigation.navigate('Tabela', { token })}
@@ -137,40 +128,9 @@ export default function JogosScreen({ navigation, route }) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#fff' },
-  topButton: { paddingHorizontal: 24, paddingTop: 16, paddingBottom: 8 },
-  bottomButtons: { flexDirection: 'row', paddingHorizontal: 24, paddingTop: 8, paddingBottom: 16 },
-  gap: { width: 12 },
-  list: { padding: 24, gap: 12 },
-  card: {
-    backgroundColor: '#F0F0F0',
-    borderRadius: 6,
-    padding: 12,
-    flexDirection: 'row',
-    alignItems: 'stretch',
-  },
   colTeam: { width: 52, alignItems: 'center', justifyContent: 'center' },
   colGols: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  gols: { fontSize: 22, fontWeight: 'bold', color: '#000' },
-  colX: { paddingHorizontal: 4, alignItems: 'center', justifyContent: 'center' },
-  x: { fontSize: 16, color: '#AAAAAA', fontWeight: '600' },
-  colActions: { width: 64, marginLeft: 8 },
-  actionTop: {
-    flex: 1,
-    backgroundColor: '#4CAF50',
-    borderRadius: 4,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 4,
-  },
-  actionBottom: {
-    flex: 1,
-    backgroundColor: '#e53935',
-    borderRadius: 4,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  actionEdit: { color: '#fff', fontWeight: '600', fontSize: 12 },
-  actionDelete: { color: '#fff', fontWeight: '600', fontSize: 12 },
-  empty: { textAlign: 'center', color: '#999', marginTop: 40 },
+  gols:    { fontSize: 22, fontWeight: 'bold', color: '#000' },
+  colX:    { paddingHorizontal: 4, alignItems: 'center', justifyContent: 'center' },
+  x:       { fontSize: 16, color: '#AAAAAA', fontWeight: '600' },
 });
