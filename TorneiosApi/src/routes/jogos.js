@@ -6,6 +6,21 @@ const router = express.Router();
 
 router.use(auth);
 
+/**
+ * @swagger
+ * /jogos:
+ *   get:
+ *     summary: Listar jogos do usuário
+ *     tags: [Jogos]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Lista de jogos com times
+ *       401:
+ *         description: Não autorizado
+ */
+
 const includeOptions = [
   { model: Time, as: 'Time1', attributes: ['sigla', 'nome', 'imagem'] },
   { model: Time, as: 'Time2', attributes: ['sigla', 'nome', 'imagem'] },
@@ -19,6 +34,36 @@ router.get('/', async (req, res) => {
   res.json(jogos);
 });
 
+/**
+ * @swagger
+ * /jogos:
+ *   post:
+ *     summary: Criar novo jogo
+ *     tags: [Jogos]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [fk_id_time1, fk_id_time2, gols_time1, gols_time2]
+ *             properties:
+ *               fk_id_time1:
+ *                 type: integer
+ *               fk_id_time2:
+ *                 type: integer
+ *               gols_time1:
+ *                 type: integer
+ *               gols_time2:
+ *                 type: integer
+ *     responses:
+ *       201:
+ *         description: Jogo criado
+ *       400:
+ *         description: Erro de validação
+ */
 router.post('/', async (req, res) => {
   try {
     const { fk_id_time1, fk_id_time2, gols_time1, gols_time2 } = req.body;
@@ -29,6 +74,40 @@ router.post('/', async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /jogos/{id}:
+ *   put:
+ *     summary: Atualizar jogo
+ *     tags: [Jogos]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               fk_id_time1:
+ *                 type: integer
+ *               fk_id_time2:
+ *                 type: integer
+ *               gols_time1:
+ *                 type: integer
+ *               gols_time2:
+ *                 type: integer
+ *     responses:
+ *       200:
+ *         description: Jogo atualizado
+ *       404:
+ *         description: Jogo não encontrado
+ */
 router.put('/:id', async (req, res) => {
   try {
     const { fk_id_time1, fk_id_time2, gols_time1, gols_time2 } = req.body;
@@ -44,6 +123,26 @@ router.put('/:id', async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /jogos/{id}:
+ *   delete:
+ *     summary: Remover jogo
+ *     tags: [Jogos]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Jogo removido
+ *       404:
+ *         description: Jogo não encontrado
+ */
 router.delete('/:id', async (req, res) => {
   const deleted = await Jogo.destroy({ where: { id: req.params.id, fk_id_usuario: req.userId } });
   if (!deleted) return res.status(404).json({ error: 'Jogo não encontrado' });

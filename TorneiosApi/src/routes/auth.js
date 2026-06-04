@@ -5,6 +5,32 @@ const { Usuario } = require('../models');
 
 const router = express.Router();
 
+/**
+ * @swagger
+ * /auth/register:
+ *   post:
+ *     summary: Registrar novo usuário
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [email, senha]
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 example: user@email.com
+ *               senha:
+ *                 type: string
+ *                 example: "123456"
+ *     responses:
+ *       201:
+ *         description: Usuário criado, retorna token JWT
+ *       400:
+ *         description: Erro de validação
+ */
 router.post('/register', async (req, res) => {
   try {
     const { email, senha } = req.body;
@@ -17,6 +43,32 @@ router.post('/register', async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /auth/login:
+ *   post:
+ *     summary: Login de usuário
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [email, senha]
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 example: user@email.com
+ *               senha:
+ *                 type: string
+ *                 example: "123456"
+ *     responses:
+ *       200:
+ *         description: Retorna token JWT
+ *       401:
+ *         description: Credenciais inválidas
+ */
 router.post('/login', async (req, res) => {
   try {
     const { email, senha } = req.body;
